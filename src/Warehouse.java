@@ -1,6 +1,7 @@
 // We need to import the java.sql package to use JDBC
 import java.sql.*;
-
+import java.util.ArrayList;
+import java.util.List;
 // for reading from the command line
 import java.io.*;
 
@@ -44,7 +45,10 @@ public class Warehouse {
 	private JTextField n;
 	private JTable topReportTable;
 
-
+	//Returned query data
+	List<String[]> TopRowData = new ArrayList<String[]>();
+	
+	
 	public Warehouse(){
 
 		mainFrame = new JFrame("Warehouse");
@@ -120,6 +124,29 @@ public class Warehouse {
 		}
 		//driver setup end
 	}
+	
+	private boolean connect(String username, String password)
+    {
+
+//*************** NEED TO CHOOSE THE SERVER URL ************************   
+
+    	//MySQL URL for HOME
+		String connectURL = "jdbc:mysql://localhost/project3";  
+//*************************************************************************
+    	
+    	try 
+    	{	
+    		con = DriverManager.getConnection(connectURL,username,password);
+
+    		System.out.println("\nConnected to Database!");
+    		return true;
+    	}
+    	catch (SQLException ex)
+    	{
+    		System.out.println("Message: " + ex.getMessage());
+    		return false;
+    	}
+    }
 
 	// Customer Pane	
 	private void loadCustomerContentPane(){
@@ -554,11 +581,73 @@ public class Warehouse {
 
 	}
 
+	//
+	//
+	//
+	//
+	//
+	//
+	
+	
 	//TRANSACTION STUFF, shopping cart still needs implementing. 
 	//The idea is to fill a variable at the top with the returned info such as in a JTable for the appropriate view.
 
-	//return 0 if successful, reutrn 1 if not successful. Also update topReportTable if successful
+	//
+	//
+	//
+	//
+	//
+	
+	//return 0 if successful, return 1 if not successful. Also update topReportTable if successful
 	private int getTopReport(String date, String n){
+    	Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select title, company, stock, sum(quantity) " + 
+				"from Orders, PurchaseItem, Item " + 
+				"where Orders.dates = '" + date + "' and Orders.receiptId = PurchaseItem.receiptId and PurchaseItem.upc = Item.upc " +
+				"group by Item.upc " +
+				"order by quantity " +
+				"desc limit " + n + ";");
+    	String title;
+    	String company;
+    	String stock;
+    	String quantity;
+    	
+    try
+	{
+	  stmt = con.createStatement();  
+	  rs = stmt.executeQuery(query);
+
+	  // get info on ResultSet
+	  ResultSetMetaData rsmd = rs.getMetaData();
+
+	  // get number of columns
+	  int numCols = rsmd.getColumnCount();
+	  String[] buffer = new String[numCols];
+	  // display column names;
+	  for (int i = 0; i < numCols; i++)
+	  {
+	      buffer[i] = rsmd.getColumnName(i+1);    
+	  }
+	  TopRowData.add(buffer);
+	  while(rs.next())
+	  {
+		  buffer[0] = rs.getString("title");
+	      buffer[1] = rs.getString("company");
+	      buffer[2] = rs.getString("stock");
+	      buffer[3] = rs.getString("sum(quantity)");
+	      TopRowData.add(buffer);
+	  }
+ 
+	  // close the statement; 
+	  // the ResultSet will also be closed
+	  	stmt.close();
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}	
 		return 0;
 	}
 
