@@ -218,7 +218,7 @@ public class Warehouse {
 						public void actionPerformed(ActionEvent arg0) {
 							int i = authenticate(usernameField.getText(),passwordField.getPassword());
 							if (i== 0){
-								loadOnlineOrder();
+								loadOnlineOrder("", "", "");
 							}
 							else{
 								JOptionPane.showMessageDialog(null, "Login Error");
@@ -575,12 +575,7 @@ public class Warehouse {
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 	}
 
-	// TODO
-	// Online Orders
-	private void loadOnlineOrder(){
-
-	}
-
+	
 	//
 	//
 	//
@@ -598,7 +593,29 @@ public class Warehouse {
 	//
 	//
 	
+	
+	// TODO
+		// Get Online Orders
+		private void loadOnlineOrder(String category, String title, String leading){
+
+		}
+		
+		// Add to shoppping cart
+	private int addShopping(String upc, String qty, String price) {
+		return 1;
+	}
+	
+	private int purchaseItem(String card, String expireDate) {
+		return 1;
+	}
+	
+	private int quantityCheck(String qty) {
+		return 1;
+	}
+	
+	
 	//return 0 if successful, return 1 if not successful. Also update topReportTable if successful
+	
 	private int getTopReport(String date, String n){
     	Statement  stmt;
     	ResultSet  rs;
@@ -652,7 +669,7 @@ public class Warehouse {
 	}
 
 	//return 0 if successful, return 1 if not successful. Also update dailyReportTable if successful.
-	private int getDailyReport(String string){
+	private int getDailyReport(String date){
 		return 1;
 	}
 
