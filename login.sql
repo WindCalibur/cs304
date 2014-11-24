@@ -1,0 +1,1 @@
+select count(*) from Customer where cid = 300 and password = 'FireBolt';

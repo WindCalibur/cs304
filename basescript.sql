@@ -56,7 +56,7 @@ create table Orders
 	 cardNumber varchar(40) not null,
 	 expiryDate date not null,
 	 expectedDate date not null,
-	 deliveredDate date not null);
+	 deliveredDate date);
 
 alter table Orders 
 add primary key (receiptId);
@@ -148,21 +148,23 @@ insert into LeadSinger values
 
 
 insert into HasSong  values
+(100, 'title');
+insert into HasSong  values
 (107, 'Let it go');
 insert into HasSong  values
 (108, 'Beat it');
 
 
 insert into Orders values
-(500, '2014-01-01', 300, '80808080', '2015-01-01', '2014-02-02', '2014-02-02');
+(500, '2014-01-01', 300, '80808080', '2015-01-01', '2014-02-02', null);
 insert into Orders values
-(501, '2014-01-01', 300, '80808081', '2015-01-01', '2014-02-02', '2014-02-02');
+(501, '2014-01-01', 300, '80808081', '2015-01-01', '2014-02-02', null);
 insert into Orders values
 (502, '2014-01-02', 300, '80808082', '2015-01-01', '2014-02-02', '2014-02-02');
 insert into Orders values
 (503, '2014-01-03', 300, '80808083', '2015-01-01', '2014-02-02', '2014-02-02');
 insert into Orders values
-(504, '2014-01-04', 300, '80808084', '2015-01-01', '2014-02-02', '2014-02-02');
+(504, '2014-01-01', 300, '80808084', '2015-01-01', '2014-02-02', '2014-02-02');
 insert into Orders values
 (505, '2014-01-01', 300, '80808084', '2015-01-01', '2014-02-02', '2014-02-02');
 insert into Orders values
@@ -186,9 +188,9 @@ insert into PurchaseItem values
 insert into PurchaseItem values
 (503, 105, 5);
 insert into PurchaseItem values
-(504, 106, 5);
+(504, 108, 5);
 insert into PurchaseItem values
-(505, 106, 10);
+(505, 100, 10);
 insert into PurchaseItem values
 (506, 106, 5);
 insert into PurchaseItem values
