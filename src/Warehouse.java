@@ -43,6 +43,15 @@ public class Warehouse {
     private JTable dailyReportTable;
     private JTextField n;
     private JTable topReportTable;
+    
+    //Online Order
+    private JTextField category;
+    private JTextField title;
+    private JTextField leadSinger;
+    private JTextField qtyOnline;
+    private JTable onlineOrderTable;
+    
+    
   
     
 	public Warehouse(){
@@ -208,6 +217,9 @@ public class Warehouse {
 				    	  
 				      });
 				      mainFrame.pack();
+				      Dimension d = mainFrame.getToolkit().getScreenSize();
+					  Rectangle r = mainFrame.getBounds();
+					  mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 				      SwingUtilities.updateComponentTreeUI(mainFrame);
 				}
 				
@@ -274,6 +286,9 @@ public class Warehouse {
 					registerPane.add(goBack);
 					mainFrame.setContentPane(registerPane);
 					mainFrame.pack();
+					Dimension d = mainFrame.getToolkit().getScreenSize();
+				    Rectangle r = mainFrame.getBounds();
+				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
 				}
 				
@@ -285,6 +300,9 @@ public class Warehouse {
 				public void actionPerformed(ActionEvent arg0) {
 					mainFrame.setContentPane(contentPane);
 					mainFrame.pack();
+					Dimension d = mainFrame.getToolkit().getScreenSize();
+				    Rectangle r = mainFrame.getBounds();
+				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
 					
 				}
@@ -297,6 +315,9 @@ public class Warehouse {
 			else{
 				mainFrame.setContentPane(customerContentPane);
 				mainFrame.pack();
+				Dimension d = mainFrame.getToolkit().getScreenSize();
+			    Rectangle r = mainFrame.getBounds();
+			    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 				SwingUtilities.updateComponentTreeUI(mainFrame);
 			}
 		
@@ -313,7 +334,7 @@ public class Warehouse {
 			clerkPane.add(date);
 			clerkPane.add(receptLabel);
 			clerkPane.add(recept_ID);
-			JButton returnItem = new JButton("return");
+			JButton returnItem = new JButton("Return Item");
 			returnItem.addActionListener(new ActionListener(){
 
 				@Override
@@ -337,6 +358,9 @@ public class Warehouse {
 			clerkPane.add(goBack);
 			mainFrame.setContentPane(clerkPane);
 			mainFrame.pack();
+			Dimension d = mainFrame.getToolkit().getScreenSize();
+		    Rectangle r = mainFrame.getBounds();
+		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
 			
 	}
@@ -379,6 +403,9 @@ public class Warehouse {
 				public void actionPerformed(ActionEvent arg0) {
 					mainFrame.setContentPane(contentPane);
 					mainFrame.pack();
+					Dimension d = mainFrame.getToolkit().getScreenSize();
+				    Rectangle r = mainFrame.getBounds();
+				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
 				}
 				
@@ -390,12 +417,18 @@ public class Warehouse {
 			managerPane.add(goBack);
 			mainFrame.setContentPane(managerPane);
 			mainFrame.pack();
+			Dimension d = mainFrame.getToolkit().getScreenSize();
+		    Rectangle r = mainFrame.getBounds();
+		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
 			
 		}
 			else{
 			mainFrame.setContentPane(managerPane);
 			mainFrame.pack();
+			Dimension d = mainFrame.getToolkit().getScreenSize();
+		    Rectangle r = mainFrame.getBounds();
+		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
 			}
 		
@@ -447,6 +480,9 @@ public class Warehouse {
 		addItemPane.add(goBack);
 		mainFrame.setContentPane(addItemPane);
 		mainFrame.pack();
+		Dimension d = mainFrame.getToolkit().getScreenSize();
+	    Rectangle r = mainFrame.getBounds();
+	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 	}
 	
@@ -484,6 +520,9 @@ public class Warehouse {
 		
 		mainFrame.setContentPane(dailySalesPane);
 		mainFrame.pack();
+		Dimension d = mainFrame.getToolkit().getScreenSize();
+	    Rectangle r = mainFrame.getBounds();
+	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 		
 	}
@@ -532,12 +571,61 @@ public class Warehouse {
 		topSellingPane.add(sP);
 		mainFrame.setContentPane(topSellingPane);
 		mainFrame.pack();
+		Dimension d = mainFrame.getToolkit().getScreenSize();
+	    Rectangle r = mainFrame.getBounds();
+	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 	}
 	
 	
 	//todo
 	private void loadOnlineOrder(){
+		JPanel onlineOrderPane = new JPanel();
+		onlineOrderTable = new JTable();
+		onlineOrderTable.setSize(400, 400);
+		JScrollPane sP = new JScrollPane(onlineOrderTable);
+	    JLabel categoryLabel = new JLabel("Category: ");
+	    JLabel titleLabel = new JLabel("Title: ");
+	    JLabel leadSingerLabel = new JLabel("Lead Singer: ");
+	    JLabel qtyOnlineLabel = new JLabel("Quantity: ");
+	    category = new JTextField(10);
+		title = new JTextField(10);
+		leadSinger = new JTextField(10);
+		qtyOnline = new JTextField(10);
+		JButton search = new JButton("Search");
+		JLabel iidLabel = new JLabel("Choose from iid in Table");
+		JTextField iid = new JTextField("Enter iid Here");
+		JButton addToShoppingCart = new JButton("Add To Shopping Cart");
+		JButton backToCustomerSelect = new JButton("Back to Customer Login");
+		
+		
+		//Add Listeners
+		
+		
+		//Add to Pane
+		onlineOrderPane.add(categoryLabel);
+		onlineOrderPane.add(category);
+		onlineOrderPane.add(titleLabel);
+		onlineOrderPane.add(title);
+		onlineOrderPane.add(leadSingerLabel);
+		onlineOrderPane.add(leadSinger);
+		onlineOrderPane.add(qtyOnlineLabel);
+		onlineOrderPane.add(qtyOnline);
+		onlineOrderPane.add(search);
+		onlineOrderPane.add(sP);
+		onlineOrderPane.add(iidLabel);
+		onlineOrderPane.add(iid);
+		onlineOrderPane.add(addToShoppingCart);
+		onlineOrderPane.add(backToCustomerSelect);
+		
+		mainFrame.setContentPane(onlineOrderPane);
+		mainFrame.setSize(900, 550);
+		Dimension d = mainFrame.getToolkit().getScreenSize();
+	    Rectangle r = mainFrame.getBounds();
+	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+		SwingUtilities.updateComponentTreeUI(mainFrame);
+		
+		
 		
 	}
 	
@@ -564,7 +652,7 @@ public class Warehouse {
 	
 	//todo return 0 if successful, return 1 if not successful. Also set currentUser field to contain cid for online ordering
 	private int authenticate(String user, char[] pass){
-		return 1;
+		return 0;
 	}
 	
 	//todo return 0 if successful, return 1 if id in use, return > 1 for error handling cases
@@ -576,7 +664,13 @@ public class Warehouse {
 	private int returnItem(String date, String receptID){
 		return 1;
 	}
-
+	
+	//return all items matching category, title, singer (check if fields is empty string("") for lack of constraint)
+	//if only 1 item is returned with the appropriate qty, add it to the shopping cart and throw a dialog box saying you did
+	//in the returning method. if insufficient qty, throw a dialog saying 
+	private int searchItem(String category, String title, String singer, String qty){
+		return 1;
+	}
 	
 	
 	
