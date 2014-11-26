@@ -1,6 +1,7 @@
 // We need to import the java.sql package to use JDBC
 import java.sql.*;
-
+import java.util.ArrayList;
+import java.util.List;
 // for reading from the command line
 import java.io.*;
 
@@ -15,6 +16,7 @@ public class Warehouse {
 	private JFrame mainFrame;
 	private String currentUser = null;
 	private JTextField usernameField;
+
     private JPasswordField passwordField;
     private JPanel contentPane;
     private JPanel customerContentPane;
@@ -51,97 +53,124 @@ public class Warehouse {
     private JTextField qtyOnline;
     private JTable onlineOrderTable;
     
+  //Returned query data
+  	List<String[]> TopRowData = new ArrayList<String[]>();
+  	List<String[]> DailyRowData = new ArrayList<String[]>();
+  	String amountReturned;
+  	boolean loggedIn = false;
+  	List<String[]> shoppingList = new ArrayList<String[]>();
+  	List<String[]> OnlineRowData = new ArrayList<String[]>();
+  	boolean quantityBoolean = false;
+  	int quantityAmount = 0;
+  	String currentUPC;
+    
     
   
     
+
+	
+
 	public Warehouse(){
-		
+
 		mainFrame = new JFrame("Warehouse");
 		contentPane = new JPanel();
 		mainFrame.setContentPane(contentPane);
 		GridBagLayout gb = new GridBagLayout();
-	    GridBagConstraints c = new GridBagConstraints();
+		GridBagConstraints c = new GridBagConstraints();
 
-	    contentPane.setLayout(gb);
-	    contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		
+		contentPane.setLayout(gb);
+		contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
 		JButton customerButton = new JButton("Customer");
 		JButton clerkButton = new JButton("Clerk");
 		JButton managerButton = new JButton("Manager");
-		
+
 		contentPane.add(customerButton);
 		contentPane.add(clerkButton);
 		contentPane.add(managerButton);
-		
-		customerButton.addActionListener(new ActionListener(){
 
+		// Event to open Customer pane		
+		customerButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadCustomerContentPane();
 			}
-			
 		});
-		
-		clerkButton.addActionListener(new ActionListener(){
 
+		// Event to open Clerk pane
+		clerkButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadClerkContent();
-				
 			}
-			
 		});
-		
-		managerButton.addActionListener(new ActionListener(){
 
+		// Event to open Manager pane		
+		managerButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadManagerContent();
-				
 			}
-			
 		});
 		
-		
-		
-		
-		
-		
-		
-		
+		// Event to close the application		
 		mainFrame.addWindowListener(new WindowAdapter() 
-	      {
-		public void windowClosing(WindowEvent e) 
-		{ 
-		  System.exit(0); 
-		}
-	      });
-		
-		 // size the window to obtain a best fit for the components
-	      mainFrame.pack();
+		{
+			public void windowClosing(WindowEvent e) 
+			{ 
+				System.exit(0); 
+			}
+		});
 
-	      // center the frame
-	      Dimension d = mainFrame.getToolkit().getScreenSize();
-	      Rectangle r = mainFrame.getBounds();
-	      mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+		// size the window to obtain a best fit for the components
+		mainFrame.pack();
 
-	      // make the window visible
-	      mainFrame.setVisible(true);
-		
-	//driver setup
-	try 
-	      {
+		// center the frame
+		Dimension d = mainFrame.getToolkit().getScreenSize();
+		Rectangle r = mainFrame.getBounds();
+		mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+
+		// make the window visible
+		mainFrame.setVisible(true);
+
+		//driver setup
+		try 
+		{
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-    	  
-   	  
-      }
-      catch (SQLException ex)
-      {
-    	  System.out.println("Message: " + ex.getMessage());
-    	  System.exit(-1);
-      }
-	//driver setup end
+		}
+		catch (SQLException ex)
+		{
+			System.out.println("Message: " + ex.getMessage());
+			System.exit(-1);
+		}
+		connect("root", "9203144130Sc");
+		//driver setup end
+	}
+	
+	private boolean connect(String username, String password)
+    {
+
+//*************** NEED TO CHOOSE THE SERVER URL ************************   
+
+    	//MySQL URL for HOME
+		String connectURL = "jdbc:mysql://localhost/project3";  
+//*************************************************************************
+    	
+    	try 
+    	{	
+    		con = DriverManager.getConnection(connectURL,username,password);
+
+    		System.out.println("\nConnected to Database!");
+    		return true;
+    	}
+    	catch (SQLException ex)
+    	{
+    		System.out.println("Message: " + ex.getMessage());
+    		return false;
+    	}
     }
+
+	// Customer Pane	
 	private void loadCustomerContentPane(){
 		if(customerContentPane == null){
 			customerContentPane = new JPanel();
@@ -149,100 +178,109 @@ public class Warehouse {
 			JButton registeredButton = new JButton("Registered User");
 			JButton registerButton = new JButton("Sign Up");
 			JButton goBack = new JButton("User Selection Screen");
-			
+
 			customerContentPane.add(registeredButton);
 			customerContentPane.add(registerButton);
 			customerContentPane.add(goBack);
-			
-			registeredButton.addActionListener(new ActionListener(){
 
+			// Event to login user			
+			registeredButton.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					JPanel customerLogin = new JPanel();
+					
 					mainFrame.setContentPane(customerLogin);
+					
 					GridBagLayout gb2 = new GridBagLayout();
-				    GridBagConstraints c2 = new GridBagConstraints();
+					GridBagConstraints c2 = new GridBagConstraints();
+					
 					usernameField = new JTextField(10);
-				    passwordField = new JPasswordField(10);
-				    passwordField.setEchoChar('*');
-				    JLabel usernameLabel = new JLabel("Enter username: ");
-				    JLabel passwordLabel = new JLabel("Enter password: ");
-				    JButton loginButton = new JButton("Log In");
-				     // place the username label 
-				      c2.gridwidth = GridBagConstraints.REMAINDER;
-				      c2.insets = new Insets(10, 10, 5, 0);
-				      gb2.setConstraints(usernameLabel, c2);
-				      customerLogin.add(usernameLabel);
+					passwordField = new JPasswordField(10);
+					passwordField.setEchoChar('*');
+					
+					JLabel usernameLabel = new JLabel("Enter username: ");
+					JLabel passwordLabel = new JLabel("Enter password: ");
+					JButton loginButton = new JButton("Log In");
+					
+					// place the username label 
+					c2.gridwidth = GridBagConstraints.REMAINDER;
+					c2.insets = new Insets(10, 10, 5, 0);
+					gb2.setConstraints(usernameLabel, c2);
+					customerLogin.add(usernameLabel);
 
-				      // place the text field for the username 
-				      c2.gridwidth = GridBagConstraints.REMAINDER;
-				      c2.insets = new Insets(10, 0, 5, 10);
-				      gb2.setConstraints(usernameField, c2);
-				      customerLogin.add(usernameField);
+					// place the text field for the username 
+					c2.gridwidth = GridBagConstraints.REMAINDER;
+					c2.insets = new Insets(10, 0, 5, 10);
+					gb2.setConstraints(usernameField, c2);
+					customerLogin.add(usernameField);
 
-				      // place password label
-				      c2.gridwidth = GridBagConstraints.REMAINDER;
-				      c2.insets = new Insets(0, 10, 10, 0);
-				      gb2.setConstraints(passwordLabel, c2);
-				      customerLogin.add(passwordLabel);
+					// place password label
+					c2.gridwidth = GridBagConstraints.REMAINDER;
+					c2.insets = new Insets(0, 10, 10, 0);
+					gb2.setConstraints(passwordLabel, c2);
+					customerLogin.add(passwordLabel);
 
-				      // place the password field 
-				      c2.gridwidth = GridBagConstraints.REMAINDER;
-				      c2.insets = new Insets(0, 0, 10, 10);
-				      gb2.setConstraints(passwordField, c2);
-				      customerLogin.add(passwordField);
+					// place the password field 
+					c2.gridwidth = GridBagConstraints.REMAINDER;
+					c2.insets = new Insets(0, 0, 10, 10);
+					gb2.setConstraints(passwordField, c2);
+					customerLogin.add(passwordField);
 
-				      // place the login button
-				      c2.gridwidth = GridBagConstraints.REMAINDER;
-				      c2.insets = new Insets(5, 10, 10, 10);
-				      c2.anchor = GridBagConstraints.CENTER;
-				      gb2.setConstraints(loginButton, c2);
-				      customerLogin.add(loginButton);
-				      
-				     
-				      loginButton.addActionListener(new ActionListener(){
+					// place the login button
+					c2.gridwidth = GridBagConstraints.REMAINDER;
+					c2.insets = new Insets(5, 10, 10, 10);
+					c2.anchor = GridBagConstraints.CENTER;
+					gb2.setConstraints(loginButton, c2);
+					customerLogin.add(loginButton);
+
+
+					loginButton.addActionListener(new ActionListener(){
 
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
 							int i = authenticate(usernameField.getText(),passwordField.getPassword());
 							if (i== 0){
-								loadOnlineOrder();
+								search("", "", "");
 							}
 							else{
 								JOptionPane.showMessageDialog(null, "Login Error");
 								loadCustomerContentPane();
 							}
-								
+
 						}
-				    	  
+    	  
 				      });
 				      mainFrame.pack();
 				      Dimension d = mainFrame.getToolkit().getScreenSize();
 					  Rectangle r = mainFrame.getBounds();
 					  mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 				      SwingUtilities.updateComponentTreeUI(mainFrame);
+
 				}
-				
+
 			});
-			
+
+			// Event to register user			
 			registerButton.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					JPanel registerPane = new JPanel();
+					
 					name = new JTextField(10);
 					address = new JTextField(10);
 					phoneNumber = new JTextField(10);
 					loginID = new JTextField(10);
 					password = new JPasswordField(10);
 					password.setEchoChar('*');
+					
 					//labels
 					JLabel nameLabel = new JLabel("Enter Name: ");
 					JLabel addressLabel = new JLabel("Enter Address: ");
 					JLabel phoneLabel = new JLabel("Enter Phone Number: ");
 					JLabel iDLabel = new JLabel("Enter Login ID: ");
 					JLabel passwordLabel = new JLabel("Enter Password: ");
-					
+
 					registerPane.add(nameLabel);
 					registerPane.add(name);
 					registerPane.add(addressLabel);
@@ -253,7 +291,7 @@ public class Warehouse {
 					registerPane.add(loginID);
 					registerPane.add(passwordLabel);
 					registerPane.add(password);
-					
+
 					JButton register = new JButton("Register");
 					register.addActionListener(new ActionListener(){
 
@@ -270,10 +308,10 @@ public class Warehouse {
 								//error handling?
 							}
 						}
-						
+
 					});
 					registerPane.add(register);
-					
+
 					JButton goBack = new JButton("Back");
 					goBack.addActionListener(new ActionListener(){
 
@@ -281,7 +319,7 @@ public class Warehouse {
 						public void actionPerformed(ActionEvent arg0) {
 							loadCustomerContentPane();
 						}
-						
+
 					});
 					registerPane.add(goBack);
 					mainFrame.setContentPane(registerPane);
@@ -291,9 +329,10 @@ public class Warehouse {
 				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
 				}
-				
+
 			});
-			
+
+			// Event to go back
 			goBack.addActionListener(new ActionListener(){
 
 				@Override
@@ -304,25 +343,23 @@ public class Warehouse {
 				    Rectangle r = mainFrame.getBounds();
 				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
-					
 				}
-				
+
 			});
-			
+
 			mainFrame.pack();
 			SwingUtilities.updateComponentTreeUI(mainFrame);
-			}
-			else{
-				mainFrame.setContentPane(customerContentPane);
-				mainFrame.pack();
-				Dimension d = mainFrame.getToolkit().getScreenSize();
-			    Rectangle r = mainFrame.getBounds();
-			    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
-				SwingUtilities.updateComponentTreeUI(mainFrame);
-			}
-		
+		}
+		else{
+			mainFrame.setContentPane(customerContentPane);
+			mainFrame.pack();
+			SwingUtilities.updateComponentTreeUI(mainFrame);
+		}
+
 	}
-	
+
+	// Clerk Pane	
+
 	private void loadClerkContent(){
 			clerkPane = new JPanel();
 			date = new JTextField(10);
@@ -363,8 +400,10 @@ public class Warehouse {
 		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
 			
+
 	}
-	
+
+	// Manager Pane
 	private void loadManagerContent(){
 		if(managerPane == null){
 			managerPane = new JPanel();
@@ -372,31 +411,38 @@ public class Warehouse {
 			JButton dSR = new JButton("Daily Sales Report");
 			JButton tSI = new JButton("Top Selling Item");
 			JButton goBack = new JButton("User Selection Screen");
-			
+
+			// Event to add a new item
 			addItem.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					loadAddItem();
 				}
-				
+
 			});
+			
+			// Event to retrieve daily sales
 			dSR.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					loadDailySales();
 				}
-				
+
 			});
+			
+			// Event to retrieve top selling items
 			tSI.addActionListener(new ActionListener(){
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					loadTopSelling();
 				}
-				
+
 			});
+			
+			// Event to go back
 			goBack.addActionListener(new ActionListener(){
 
 				@Override
@@ -408,9 +454,9 @@ public class Warehouse {
 				    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 					SwingUtilities.updateComponentTreeUI(mainFrame);
 				}
-				
+
 			});
-			
+
 			managerPane.add(addItem);
 			managerPane.add(dSR);
 			managerPane.add(tSI);
@@ -421,20 +467,18 @@ public class Warehouse {
 		    Rectangle r = mainFrame.getBounds();
 		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
-			
 		}
-			else{
+		else{
 			mainFrame.setContentPane(managerPane);
 			mainFrame.pack();
 			Dimension d = mainFrame.getToolkit().getScreenSize();
 		    Rectangle r = mainFrame.getBounds();
 		    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 			SwingUtilities.updateComponentTreeUI(mainFrame);
-			}
-		
-		
+		}
 	}
-	
+
+	// Adding Items	
 	public void loadAddItem(){
 		JPanel addItemPane = new JPanel();
 		JLabel upcLabel = new JLabel("Enter UPC: ");
@@ -443,35 +487,34 @@ public class Warehouse {
 		upc = new JTextField(10);
 		qty = new JTextField(10);
 		price = new JTextField(10);
-		
+
 		addItemPane.add(upcLabel);
 		addItemPane.add(upc);
 		addItemPane.add(qtyLabel);
 		addItemPane.add(qty);
 		addItemPane.add(priceLabel);
 		addItemPane.add(price);
-		
-		JButton addItem = new JButton("Add Item");
-		addItem.addActionListener(new ActionListener(){
-			
 
+		JButton addItem = new JButton("Add Item");
+		// Event to add item
+		addItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int i = addItem(upc.getText(), qty.getText(), price.getText());
 				if (i == 0){
-					
-				}else if (i == 1){
-					
-				}else{
-					
+
+				} else if (i == 1){
+
+				} else{
+
 				}
 			}
 		});
 		addItemPane.add(addItem);
+		
 		JButton goBack = new JButton("back");
+		// Event to go back
 		goBack.addActionListener(new ActionListener(){
-			
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadManagerContent();
@@ -485,7 +528,8 @@ public class Warehouse {
 	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 	}
-	
+
+	// Daily Sales	
 	public void loadDailySales(){
 		JPanel dailySalesPane = new JPanel();
 		dailyReportTable = new JTable();
@@ -495,20 +539,23 @@ public class Warehouse {
 		reportDate = new JTextField(10);
 		dailySalesPane.add(dateLabel);
 		dailySalesPane.add(reportDate);
+		
 		JButton getReport = new JButton("Get Report");
+		// Event to get report of daily sales
 		getReport.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				getDailyReport(reportDate.getText());
-				
+
 			}
-			
+
 		});
 		dailySalesPane.add(getReport);
+		
 		JButton goBack = new JButton("back");
+		// Event to load manager content
 		goBack.addActionListener(new ActionListener(){
-			
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -517,16 +564,17 @@ public class Warehouse {
 		});
 		dailySalesPane.add(goBack);
 		dailySalesPane.add(sP);
-		
+
 		mainFrame.setContentPane(dailySalesPane);
 		mainFrame.pack();
 		Dimension d = mainFrame.getToolkit().getScreenSize();
 	    Rectangle r = mainFrame.getBounds();
 	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
-		
+
 	}
-	
+
+	// Top Selling Items	
 	public void loadTopSelling(){
 		JPanel topSellingPane = new JPanel();
 		topReportTable = new JTable();
@@ -540,28 +588,31 @@ public class Warehouse {
 		topSellingPane.add(reportDate);
 		topSellingPane.add(nLabel);
 		topSellingPane.add(n);
+		
 		JButton getReport = new JButton("Get Report");
+		// Event to get top selling items report
 		getReport.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int i = getTopReport(reportDate.getText(), n.getText());
+				//int i = updateDelivery(reportDate.getText(), n.getText());
 				if(i == 0){
-					
+
 				}else if (i == 1){
-					
+
 				}else{
-					
+
 				}
-				
+
 			}
-			
+
 		});
 		topSellingPane.add(getReport);
+		
 		JButton goBack = new JButton("back");
+		// Event go back
 		goBack.addActionListener(new ActionListener(){
-			
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadManagerContent();
@@ -576,8 +627,27 @@ public class Warehouse {
 	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
 	}
+
+	
+	//
+	//
+	//
+	//
+	//
+	//
 	
 	
+	//TRANSACTION STUFF, shopping cart still needs implementing. 
+	//The idea is to fill a variable at the top with the returned info such as in a JTable for the appropriate view.
+
+	//
+	//
+	//
+	//
+	//
+	
+	
+
 	//todo
 	private void loadOnlineOrder(){
 		JPanel onlineOrderPane = new JPanel();
@@ -624,58 +694,562 @@ public class Warehouse {
 	    Rectangle r = mainFrame.getBounds();
 	    mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 		SwingUtilities.updateComponentTreeUI(mainFrame);
-		
-		
-		
 	}
+
+	// TODO
+		// Get Online Orders
+		// Updates OnlineRowData
+		private int search(String category, String title, String leading){
+			Statement  stmt;
+	    	ResultSet  rs;
+	    	String query = ("select select Item.upc, Item.title, type, category, company, year, price, stock, name, h.title AS htitle from Item, " + 
+	    	"LeadSinger, HasSong h where Item.upc = LeadSinger.upc and Item.upc = h.upc");
+	    	if (category != "") {
+	    		query = query + " and category = '" + category + "'";
+	    	}
+	    	if (leading != "") {
+	    		query = query + " and name = '" + leading + "'";
+	    	}
+	    	if (title != "") {
+	    		query = query + " and h.title = '" + title + "'";
+	    	}
+	    	query = query + ";";
+
+	    try
+		{
+		  stmt = con.createStatement();  
+		  rs = stmt.executeQuery(query);
+		  		  
+		  // get info on ResultSet
+		  ResultSetMetaData rsmd = rs.getMetaData();
+
+		  // get number of columns
+		  int numCols = rsmd.getColumnCount();
+		  String[] buffer = new String[numCols];
+		  // display column names;
+		  buffer[0] = "UPC";
+	      buffer[1] = "Item title";
+	      buffer[2] = "Type";
+	      buffer[3] = "Category";
+	      buffer[4] = "Company";
+	      buffer[5] = "Year";
+	      buffer[6] = "Price";
+	      buffer[7] = "Stock";
+	      buffer[8] = "Leading Singer";
+	      buffer[9] = "Song Title";
+		  OnlineRowData.add(buffer);
+		  //displayToConsole(rs);
+		  while(rs.next())
+		  {
+			  buffer = new String[numCols];
+			  buffer[0] = rs.getString("upc");
+		      buffer[1] = rs.getString("title");
+		      buffer[2] = rs.getString("type");
+		      buffer[3] = rs.getString("category");
+		      buffer[0] = rs.getString("company");
+		      buffer[1] = rs.getString("year");
+		      buffer[0] = rs.getString("price");
+		      buffer[1] = rs.getString("stock");
+		      buffer[2] = rs.getString("name");
+		      buffer[3] = rs.getString("htitle");
+		      OnlineRowData.add(buffer);
+		  }
+	 
+		  // close the statement; 
+		  // the ResultSet will also be closed
+		  	stmt.close();
+			}
+			catch (SQLException ex)
+			{
+			    System.out.println("Message: " + ex.getMessage());
+			    return 1;
+			}	
+	    	displayToConsole2(TopRowData);
+			return 0;
+		}
+
+		
+		// Add to shopping cart
+		// Updates shoppingList
 	
-	
-	//TRANSACTION STUFF, shopping cart still needs implementing. 
-	//The idea is to fill a variable at the top with the returned info such as in a JTable for the appropriate view.
-	
-	
-	//return 0 if successful, reutrn 1 if not successful. Also update topReportTable if successful
-	private int getTopReport(String date, String n){
-		return 0;
-	}
-	
-	//return 0 if successful, return 1 if not successful. Also update dailyReportTable if successful.
-	private int getDailyReport(String string){
+	private int addShopping(String upc, String qty, String price) {
+		String[] buffer = new String[3];
+		buffer[0] = upc;
+		buffer[1] = qty;
+		buffer[2] = price;
+		shoppingList.add(buffer);
 		return 1;
 	}
 	
+	// Uses: currentUser, quantityAmount, currentUPC
 	
+	private int purchaseItem(String card, String expireDate) {
+		Statement  stmt;
+    	ResultSet  rs;
+    	int count;
+    	
+    	String query = ("select count(*) from Orders where deliveredDate IS NULL;");
+    	try {
+	    	stmt = con.createStatement(); 
+	    	rs = stmt.executeQuery(query);
+	    	rs.next();
+	    	count = Integer.parseInt(rs.getString("count(*)"));
+	    	// a = orders per day approxiate
+	    	int a = 1;
+	    	count = count / a;
+	    	query = ("select max(receiptId) from Orders;");
+	    	stmt = con.createStatement(); 
+	    	rs = stmt.executeQuery(query);
+	    	rs.next();
+	    	String receiptId = rs.getString("max(receiptId)");
+	    	int rid = 0;
+	    	if (rs.wasNull()) {
+				  rid = 100;
+			  } else {
+				  rid = 1 + Integer.parseInt(receiptId);
+			  }
+	    	query = ("insert into Orders values " + 
+	    			"("+ rid +", curdate(), "+ currentUser +", '" + card + "', '" + expireDate + "', date_add(curdate(), interval " + count + " day), null));");		
+	    	
+	    	stmt = con.createStatement(); 
+    		int rows = stmt.executeUpdate(query);
+	    	if (rows != 0 ) {
+	    		return 1;	
+	    	} 
+	    	query = ("insert into PurchaseItem values (" + rid + ", " + currentUPC + ", " + quantityAmount + ");");
+	    	stmt = con.createStatement(); 
+    		rows = stmt.executeUpdate(query);
+	    	if (rows != 0 ) {
+	    		return 1;	
+	    	} 
+	    	// Update quantity
+	    	query = ("update Item set stock = stock - " + quantityAmount + " where upc = " + currentUPC + ";");
+	    	stmt = con.createStatement(); 
+    		rows = stmt.executeUpdate(query);
+	    	if (rows != 0 ) {
+	    		return 1;	
+	    	} 
+	    	return 0;
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return 1;
+    	}
+	}
+	
+	// updates quantityBoolean and quantityAmount(actual quantity of item)
+	private int quantityCheck(String qty, String upc) {
+		Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select stock, count(*) from Item Where Item.upc = " + upc + ";");
+    	int quantity;
+    try
+	{
+	  stmt = con.createStatement();  
+	  rs = stmt.executeQuery(query);
+	  rs.next();
+	  if (Integer.parseInt(rs.getString("count(*)")) == 0) {
+		  stmt.close();
+		  return 1;
+	  }  
+	  quantity = Integer.parseInt(rs.getString("stock"));
+	  stmt.close();
+	  if (quantity < Integer.parseInt(qty)) {
+		  quantityAmount = quantity;
+		  return 1;
+	  }
+	  
+
+	  // get info on ResultSet
+	  	  	
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}	
+    	//displayToConsole2(TopRowData);
+		return 0;
+	}
+	
+	
+	//return 0 if successful, return 1 if not successful. Also update topReportTable if successful
+	// updates topRowData
+	
+	private int getTopReport(String date, String n){
+    	Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select title, company, stock, sum(quantity) " + 
+				"from Orders, PurchaseItem, Item " + 
+				"where Orders.dates = '" + date + "' and Orders.receiptId = PurchaseItem.receiptId and PurchaseItem.upc = Item.upc " +
+				"group by Item.upc " +
+				"order by quantity " +
+				"desc limit " + n + ";");
+    	
+    try
+	{
+	  stmt = con.createStatement();  
+	  rs = stmt.executeQuery(query);
+
+	  // get info on ResultSet
+	  ResultSetMetaData rsmd = rs.getMetaData();
+
+	  // get number of columns
+	  int numCols = rsmd.getColumnCount();
+	  String[] buffer = new String[numCols];
+	  // display column names;
+	  buffer[0] = "Title";
+      buffer[1] = "Company";
+      buffer[2] = "Stock";
+      buffer[3] = "Sold";
+	  TopRowData.add(buffer);
+	  //displayToConsole(rs);
+	  while(rs.next())
+	  {
+		  buffer = new String[numCols];
+		  buffer[0] = rs.getString("title");
+	      buffer[1] = rs.getString("company");
+	      buffer[2] = rs.getString("stock");
+	      buffer[3] = rs.getString("sum(quantity)");
+	      TopRowData.add(buffer);
+	  }
+ 
+	  // close the statement; 
+	  // the ResultSet will also be closed
+	  	stmt.close();
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}	
+    	displayToConsole2(TopRowData);
+		return 0;
+	}
+
+	//
+	//
+	//
+	//return 0 if successful, return 1 if not successful. Also update dailyReportTable if successful.
+	//updates DailyRowData
+	private int getDailyReport(String date){
+		Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select i.upc, category, price, sum(p.quantity), sum(price)	from Item i, PurchaseItem p, Orders"
+    			+ "	where Orders.dates = '" + date + "' and i.upc = p.upc and p.receiptId = Orders.receiptId "
+    			+ "group by i.upc "
+    			+ "order by category;");
+
+    	String CurrentCategory = "";
+    	int subUnit = 0;
+    	int totalUnit = 0;
+    	int subSum = 0;
+    	int totalSum = 0;
+    	int numCols;
+    	String[] buffer;
+    	String[] buffer2;
+    	
+    try
+	{
+	  stmt = con.createStatement();  
+	  rs = stmt.executeQuery(query);
+
+	  // get info on ResultSet
+	  ResultSetMetaData rsmd = rs.getMetaData();
+
+	  // get number of columns
+	  numCols = rsmd.getColumnCount();
+	  buffer = new String[numCols];
+	  buffer2 = new String[numCols];
+	  
+	  //displayToConsole(rs);
+	  // display column names;
+	  buffer[0] = "UPC";
+      buffer[1] = "Category";
+      buffer[2] = "Unit Price";
+      buffer[3] = "Units";
+      buffer[4] = "Total Value";
+	  DailyRowData.add(buffer);
+	  
+	  while(rs.next())
+	  {		
+		  buffer = new String[numCols];
+		  buffer2 = new String[numCols];
+		  buffer[0] = rs.getString("upc");
+	      buffer[1] = rs.getString("category");
+	      buffer[2] = rs.getString("price");
+	      buffer[3] = rs.getString("sum(p.quantity)");
+	      buffer[4] = rs.getString("sum(price)");
+	      if (CurrentCategory.equals(buffer[1])) {
+	    	  subUnit = subUnit + Integer.parseInt(buffer[3]);
+	    	  subSum = subSum + Integer.parseInt(buffer[4]);
+	      } else {	
+	    	  totalUnit = totalUnit + subUnit;
+	    	  totalSum = totalSum + subSum;
+	    	  buffer2[0] = "";
+	          buffer2[1] = "Total";
+	          buffer2[2] = "";
+	    	  buffer2[3] = Integer.toString(subUnit);
+	    	  buffer2[4] = Integer.toString(subSum);
+	    	  subUnit = Integer.parseInt(buffer[3]);
+	    	  subSum = Integer.parseInt(buffer[4]);
+	    	  if (!CurrentCategory.equals("")) {
+	    	  DailyRowData.add(buffer2);
+	    	  }
+	    	  CurrentCategory = buffer[1];
+	    	  
+	      }
+	      DailyRowData.add(buffer);
+	  }
+ 
+	  // close the statement; 
+	  // the ResultSet will also be closed
+	  	stmt.close();
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}
+      totalUnit = totalUnit + subUnit;
+	  totalSum = totalSum + subSum;
+	  buffer2 = new String[numCols];
+	  buffer2[0] = "";
+      buffer2[1] = "Total";
+      buffer2[2] = "";
+	  buffer2[3] = Integer.toString(subUnit);
+	  buffer2[4] = Integer.toString(subSum);
+	  DailyRowData.add(buffer2);
+	  buffer2 = new String[numCols];
+	  buffer2[0] = "";
+      buffer2[1] = "Total Daily Sales";
+      buffer2[2] = "";
+	  buffer2[3] = Integer.toString(totalUnit);
+	  buffer2[4] = Integer.toString(totalSum);
+	  DailyRowData.add(buffer2);
+	  displayToConsole2(DailyRowData);
+	  return 0;
+	}
+
 	//return 0 if successful, return 1 if not successful
 	private int addItem(String upc, String qty, String price ){
-		return 1;
+		Statement  stmt;
+    	String query = ("update Item set stock = stock + " + qty + " where upc = " + upc + ";");
+    	try {
+	    	stmt = con.createStatement(); 
+	    	int rows = stmt.executeUpdate(query);
+	    	if (rows == 0 ) {
+	    		return 1;	
+	    	} 
+	    	if (!price.equals("")) {
+	    		query = ("update Item set price = " + price + " where upc = " + upc + ";");
+	    		stmt = con.createStatement(); 
+	    		rows = stmt.executeUpdate(query);
+		    	if (rows == 0 ) {
+		    		return 1;	
+		    	} 
+	    	}
+	    	return 0;
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return 1;
+    	}
 	}
-	
+
 	//todo return 0 if successful, return 1 if not successful. Also set currentUser field to contain cid for online ordering
+	// Updates currentUser and loggedIn
 	private int authenticate(String user, char[] pass){
-		return 0;
+
+		Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select count(*) from Customer where cid = " + user + " and password = '" + pass.toString() + "';");
+    	int count;
+    	//System.out.println(pass.toString());
+    try
+	{
+	  stmt = con.createStatement();  
+	  rs = stmt.executeQuery(query);
+
+	  // get info on ResultSet
+	  rs.next();
+	  count = Integer.parseInt(rs.getString("count(*)"));
+	  stmt.close();
+	  if (count == 0) {
+		  //System.out.println("failure login");
+		  return 1;
+	  } else {
+		  currentUser = user;
+		  loggedIn = true;
+		  //System.out.println("successful login");
+		  return 0;
+	  }
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}	
+
 	}
-	
+
 	//todo return 0 if successful, return 1 if id in use, return > 1 for error handling cases
 	private int registerUser(String name, String address, String phone, String id, char[] pass){
-		return 1;
+		Statement  stmt;
+    	String query = ("insert into Customer values (" + id + ", '" + pass.toString() + "', '" + name + "', '" + address
+    	+ "', '" + phone + "');");
+    	try {
+	    	stmt = con.createStatement(); 
+	    	int rows = stmt.executeUpdate(query);
+	    	if (rows != 0 ) {
+	    		return 0;	
+	    	} else {
+	    		return 1;
+	    	}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return 1;
+    	}	
 	}
-	
+
 	//todo 
-	private int returnItem(String date, String receptID){
-		return 1;
+	// Results are stored in amountReturned
+	private int returnItem(String date, String receiptID){
+		Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("select count(*), upc, quantity from PurchaseItem, Orders "
+    			+ "where Orders.receiptId = PurchaseItem.receiptId and datediff('" + date + "', Orders.dates) > 15 and "
+    			+ receiptID + " = PurchaseItem.receiptId;");
+    	int count;
+    	int retId;
+    	int price;
+    	String upc;
+    	String quantity;
+    try
+	{
+    	
+	  stmt = con.createStatement();  
+	  System.out.println("here");
+	  rs = stmt.executeQuery(query);
+	  System.out.println("here2");
+	  // displayToConsole(rs);
+	  rs.next();
+	  count = Integer.parseInt(rs.getString("count(*)"));
+	  System.out.println(count);
+	  if (count > 0) {
+		  upc = rs.getString("upc");
+		  System.out.println(upc);
+		  quantity = rs.getString("quantity");
+		  System.out.println(quantity);
+		  query = ("select max(retId)" +
+				  "from Returns;");	
+		  stmt = con.createStatement();
+		  rs = stmt.executeQuery(query);
+		  rs.next();
+		  String stub = rs.getString("max(retId)");
+		  if (rs.wasNull()) {
+			  retId = 100;
+		  } else {
+			  retId = 1 + Integer.parseInt(rs.getString("max(retId)"));
+		  }
+		  System.out.println(retId);
+		  query = ("insert into Returns values " + 
+				  "(" + retId + ",'" + date + "'," + receiptID + ");"); 
+		  stmt = con.createStatement();
+		  int rows = stmt.executeUpdate(query);
+		  System.out.println("First row" + rows);
+	    	if (rows == 0 ) {
+	    		return 1;	
+	    	}
+		  query = ("insert into ReturnItem values " + 
+				  "(" + retId + "," + upc + "," + quantity + ");");
+		  System.out.println("Second row" + rows);
+		  stmt = con.createStatement();
+		  rows = stmt.executeUpdate(query);
+	    	if (rows == 0 ) {
+	    		return 1;	
+	    	}
+		  query = ("(select price from Item "+
+				  "where " + upc + " = Item.upc);");
+		  stmt = con.createStatement();
+		  rs = stmt.executeQuery(query);
+		  rs.next();
+		  price = Integer.parseInt(rs.getString("price"));
+		  query = ("update Item set stock = stock - " + quantity + " "+
+				  "where upc = " + upc + " ;");
+		  stmt = con.createStatement();
+		  rows = stmt.executeUpdate(query);
+		  System.out.println("Fourth row" + rows);
+	    	if (rows == 0 ) {
+	    		return 1;	
+	    	}
+		  amountReturned = Integer.toString(price*(Integer.parseInt(quantity)));
+		  System.out.println(amountReturned);
+	  }
+	  // get info on ResultSet
+	  ResultSetMetaData rsmd = rs.getMetaData();
+	  // get number of columns
+	  stmt.close();
+		}
+		catch (SQLException ex)
+		{
+		    System.out.println("Message: " + ex.getMessage());
+		    return 1;
+		}
+      return 0;
+	}
+
+	
+	
+
+	
+	private int updateDelivery(String date, String receiptId) {
+		Statement  stmt;
+    	ResultSet  rs;
+    	String query = ("update Orders set deliveredDate = '" + date + "' where receiptId = "+ receiptId + ";");
+    	try {
+	    	stmt = con.createStatement(); 
+	    	int rows = stmt.executeUpdate(query);
+	    	if (rows != 0 ) {
+	    		return 0;	
+	    	} else {
+	    		return 1;
+	    	}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    		return 1;
+    	}
 	}
 	
-	//return all items matching category, title, singer (check if fields is empty string("") for lack of constraint)
-	//if only 1 item is returned with the appropriate qty, add it to the shopping cart and throw a dialog box saying you did
-	//in the returning method. if insufficient qty, throw a dialog saying 
-	private int searchItem(String category, String title, String singer, String qty){
-		return 1;
+	private void displayToConsole(ResultSet rs) {
+		System.out.println(" ");
+		try {
+			while(rs.next())
+			  {
+			      System.out.printf("%-15.15s", rs.getString("count(*)"));
+			      System.out.printf("%-15.15s", rs.getString("upc"));
+			      System.out.printf("%-15.15s", rs.getString("quantity"));
+			     // System.out.printf("%-15.15s", rs.getString("sum(p.quantity)"));
+			     // System.out.printf("%-15.15s\n", rs.getString("sum(price)"));
+			  }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	
-	
+	private void displayToConsole2(List<String[]> dailyRowData2) {
+		System.out.println(" ");
+		for (int i = 0; i < dailyRowData2.size(); i++) {
+			for (int j = 0; j < dailyRowData2.get(i).length; j++) {
+				System.out.printf("%-15.15s", dailyRowData2.get(i)[j]);
+			}
+			System.out.println(" ");
+		}
+	}
+
 	public static void main(String args[])
-    {
-      Warehouse w = new Warehouse();
-    }
+	{
+		Warehouse w = new Warehouse();
+		
+	}
 }
+
