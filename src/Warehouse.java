@@ -181,8 +181,8 @@ public class Warehouse {
     	
     	try 
     	{	
-    		con = DriverManager.getConnection(connectURL,username,password);
-
+//    		con = DriverManager.getConnection(connectURL,username,password);
+    		con = DriverManager.getConnection(connectURL,"root","");
     		System.out.println("\nConnected to Database!");
     		return true;
     	}
@@ -798,6 +798,8 @@ public class Warehouse {
 		JLabel ccExpiryLabel = new JLabel("Expiry Date");
 		JLabel ccNumberLabel = new JLabel("Credit Card Number");
 		JButton purchaseConfirm = new JButton("Confirm Purchase");
+		// insert here
+		JButton goBack = new JButton("Back to Order");
 		
 		Vector<String> columnNames = new Vector<String>();
 		columnNames.add("Item UPC");
@@ -832,6 +834,7 @@ public class Warehouse {
 		checkOutPane.add(ccExpiry);
 		checkOutPane.add(sP);
 		checkOutPane.add(purchaseConfirm);
+		checkOutPane.add(goBack);
 		purchaseConfirm.addActionListener(new ActionListener(){
 
 			@Override
@@ -866,6 +869,13 @@ public class Warehouse {
 				}
 			}
 			
+		});
+		goBack.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				loadOnlineOrder();
+			}
 		});
 		mainFrame.setContentPane(checkOutPane);
 		mainFrame.setSize(600, 600);
