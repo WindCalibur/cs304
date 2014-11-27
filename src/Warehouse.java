@@ -24,7 +24,7 @@ public class Warehouse {
 	//MySQL URL for HOME
 	String connectURL = "jdbc:mysql://localhost/project3";  
 	String Login = "root";
-	String Login_Password = "9203144130Sc";
+	String Login_Password = "";
 	//*****************************************************************************************
 	private Connection con;
 	private JFrame mainFrame;
@@ -203,7 +203,7 @@ public class Warehouse {
 		if(customerContentPane == null){
 			customerContentPane = new JPanel();
 			mainFrame.setContentPane(customerContentPane);
-			JButton registeredButton = new JButton("Register User");
+			JButton registeredButton = new JButton("Log in");
 			JButton registerButton = new JButton("Sign Up");
 			JButton goBack = new JButton("User Selection Screen");
 
