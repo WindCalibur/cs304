@@ -185,8 +185,7 @@ public class Warehouse {
     	
     	try 
     	{	
-//    		con = DriverManager.getConnection(connectURL,username,password);
-    		con = DriverManager.getConnection(connectURL,"root","");
+    		con = DriverManager.getConnection(connectURL,username,password);
     		System.out.println("\nConnected to Database!");
     		return true;
     	}
@@ -450,9 +449,9 @@ public class Warehouse {
 					
 					if(i== 0){
 						if(amountReturned == null){
-						JOptionPane.showMessageDialog(null, "No purchases found, either no such purchase or it's already returned");	
+						JOptionPane.showMessageDialog(null, "No purchases found, either no such purchase, it's already returned, or date entered is not within 15 days.");	
 						}else
-						JOptionPane.showMessageDialog(null, "Refund Is: " + amountReturned);
+						JOptionPane.showMessageDialog(null, "You have been refounded " + amountReturned + " dollars.");
 					}else{
 						JOptionPane.showMessageDialog(null, "No Records Found");
 					}
@@ -579,6 +578,7 @@ public class Warehouse {
 		upc = new JTextField(10);
 		qty = new JTextField(10);
 		price = new JTextField(10);
+
 
 		addItemPane.add(upcLabel);
 		addItemPane.add(upc);
@@ -720,7 +720,7 @@ public class Warehouse {
 		JLabel dateLabel = new JLabel("Enter Date of Report: ");
 		reportDate = new JTextField("YYYY-MM-DD");
 		JLabel nLabel = new JLabel("Enter Max Items Shown: ");
-		n = new JTextField("Number Value Here");
+		n = new JTextField("Number Value Here", 10);
 		topSellingPane.add(dateLabel);
 		topSellingPane.add(reportDate);
 		topSellingPane.add(nLabel);
@@ -926,7 +926,7 @@ public class Warehouse {
 		qtyOnline = new JTextField(10);
 		JButton search = new JButton("Search");
 		JLabel iidLabel = new JLabel("Choose from upc in Table");
-		upcOnline = new JTextField("Enter upc Here");
+		upcOnline = new JTextField("Enter upc Here", 10);
 		JButton addToShoppingCart = new JButton("Add To Shopping Cart");
 		JButton backToCustomerSelect = new JButton("Back to Customer Select");
 		JButton checkOut = new JButton("Checkout");
@@ -1394,7 +1394,7 @@ public class Warehouse {
 				"from Orders, PurchaseItem, Item " + 
 				"where Orders.dates = '" + date + "' and Orders.receiptId = PurchaseItem.receiptId and PurchaseItem.upc = Item.upc " +
 				"group by Item.upc " +
-				"order by quantity " +
+				"order by sum(quantity) " +
 				"desc limit " + n + ";");
     	
     try
