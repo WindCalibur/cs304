@@ -875,13 +875,14 @@ public class Warehouse {
 				JOptionPane.showMessageDialog(null, "Purchase Complete, all items should arrive within " + Integer.toString(finalCount) + " days");
 				//loadCustomerContentPane();
 				}else{
-				JOptionPane.showMessageDialog(null, Integer.toString(i) + "Purchases were incomplete");
+				JOptionPane.showMessageDialog(null, Integer.toString(i) + " Purchases were incomplete");
 				}
 				}else{
 					JOptionPane.showMessageDialog(null, "Date Invalid");
 					return;
 				}
 				shoppingList.clear();
+				loadOnlineOrder();
 				
 			}
 			
