@@ -185,8 +185,8 @@ public class Warehouse {
     	
     	try 
     	{	
-    		con = DriverManager.getConnection(connectURL,username,password);
-
+//    		con = DriverManager.getConnection(connectURL,username,password);
+    		con = DriverManager.getConnection(connectURL,"root","");
     		System.out.println("\nConnected to Database!");
     		return true;
     	}
@@ -812,7 +812,8 @@ public class Warehouse {
 		JLabel ccExpiryLabel = new JLabel("Expiry Date");
 		JLabel ccNumberLabel = new JLabel("Credit Card Number");
 		JButton purchaseConfirm = new JButton("Confirm Purchase");
-		JButton backButton = new JButton("Back");
+		JButton goBack = new JButton("Back to Order");
+
 		
 		Vector<String> columnNames = new Vector<String>();
 		columnNames.add("Item UPC");
@@ -847,7 +848,7 @@ public class Warehouse {
 		checkOutPane.add(ccExpiry);
 		checkOutPane.add(sP);
 		checkOutPane.add(purchaseConfirm);
-		checkOutPane.add(backButton);
+		checkOutPane.add(goBack);
 		purchaseConfirm.addActionListener(new ActionListener(){
 
 			@Override
@@ -871,7 +872,7 @@ public class Warehouse {
 				i = i + purchaseItem(ccNumber.getText(), ccExpiry.getText());
 				}
 				if(i == 0){
-				JOptionPane.showMessageDialog(null, "Purchase Complete, all items should arrive within " + Integer.toString(finalCount) + "days");
+				JOptionPane.showMessageDialog(null, "Purchase Complete, all items should arrive within " + Integer.toString(finalCount) + " days");
 				//loadCustomerContentPane();
 				}else{
 				JOptionPane.showMessageDialog(null, Integer.toString(i) + "Purchases were incomplete");
@@ -885,7 +886,8 @@ public class Warehouse {
 			}
 			
 		});
-		backButton.addActionListener(new ActionListener(){
+		goBack.addActionListener(new ActionListener(){
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				loadOnlineOrder();
@@ -972,10 +974,10 @@ public class Warehouse {
 							JOptionPane.showMessageDialog(null, qtyOnline.getText().trim() +" of Item# "+ upcTemp + "at Price " + price +" is in the Cart");
 							
 							}else{
-								int flag = JOptionPane.showConfirmDialog(null, "quantity available (" + qty +")is lower than user specificed ("+ qtyOnline.getText().trim() + "), continue?");
+								int flag = JOptionPane.showConfirmDialog(null, "quantity available (" + qty +") is lower than user specificed ("+ qtyOnline.getText().trim() + "), continue?");
 								if(flag == 0){
 									addShopping(upcTemp, qtyOnline.getText(), price);
-									JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcTemp + "at Price " + price +" is in the Cart");
+									JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcTemp + " at Price " + price +" is in the Cart");
 									//System.out.print("yay");
 								}
 								
