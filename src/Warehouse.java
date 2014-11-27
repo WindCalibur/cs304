@@ -18,6 +18,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Warehouse {
+	
+	//*************** NEED TO CHOOSE THE SERVER, USERNAME, AND PASSWORD************************   
+
+	//MySQL URL for HOME
+	String connectURL = "jdbc:mysql://localhost/project3";  
+	String Login = "root";
+	String Login_Password = "9203144130Sc";
+	//*****************************************************************************************
 	private Connection con;
 	private JFrame mainFrame;
 	private String currentUser = null;
@@ -163,7 +171,7 @@ public class Warehouse {
 			System.out.println("Message: " + ex.getMessage());
 			System.exit(-1);
 		}
-		connect("root", "1234");
+		connect(Login, Login_Password);
 		//driver setup end
 		if(con == null){
 			System.exit(1);
@@ -173,11 +181,7 @@ public class Warehouse {
 	private boolean connect(String username, String password)
     {
 
-//*************** NEED TO CHOOSE THE SERVER URL ************************   
 
-    	//MySQL URL for HOME
-		String connectURL = "jdbc:mysql://localhost/project3";  
-//*************************************************************************
     	
     	try 
     	{	
@@ -1553,7 +1557,6 @@ public class Warehouse {
     	ResultSet  rs;
     	String query = ("select count(*) from Customer where cid = " + user + " and password = '" + newPass + "';");
     	int count;
-    	//System.out.println(pass.toString());
     try
 	{
 	  stmt = con.createStatement();  
@@ -1564,12 +1567,10 @@ public class Warehouse {
 	  count = Integer.parseInt(rs.getString("count(*)"));
 	  stmt.close();
 	  if (count == 0) {
-		  //System.out.println("failure login");
 		  return 1;
 	  } else {
 		  currentUser = user;
 		  loggedIn = true;
-		  //System.out.println("successful login");
 		  return 0;
 	  }
 		}
