@@ -203,7 +203,7 @@ public class Warehouse {
 		if(customerContentPane == null){
 			customerContentPane = new JPanel();
 			mainFrame.setContentPane(customerContentPane);
-			JButton registeredButton = new JButton("Registered User");
+			JButton registeredButton = new JButton("Register User");
 			JButton registerButton = new JButton("Sign Up");
 			JButton goBack = new JButton("User Selection Screen");
 
@@ -229,6 +229,7 @@ public class Warehouse {
 					JLabel usernameLabel = new JLabel("Enter LoginId: ");
 					JLabel passwordLabel = new JLabel("Enter password: ");
 					JButton loginButton = new JButton("Log In");
+					JButton goBack = new JButton("Back");
 					
 					// place the username label 
 					c2.gridwidth = GridBagConstraints.REMAINDER;
@@ -260,7 +261,7 @@ public class Warehouse {
 					c2.anchor = GridBagConstraints.CENTER;
 					gb2.setConstraints(loginButton, c2);
 					customerLogin.add(loginButton);
-
+					customerLogin.add(goBack);
 
 					loginButton.addActionListener(new ActionListener(){
 
@@ -280,15 +281,24 @@ public class Warehouse {
 						}
     	  
 				      });
+					
+					goBack.addActionListener(new ActionListener(){
+
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+								loadCustomerContentPane();
+						}
+    	  
+				      });
 				      mainFrame.pack();
 				      Dimension d = mainFrame.getToolkit().getScreenSize();
 					  Rectangle r = mainFrame.getBounds();
 					  mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
 				      SwingUtilities.updateComponentTreeUI(mainFrame);
-
 				}
 
 			});
+			
 
 			// Event to register user			
 			registerButton.addActionListener(new ActionListener(){
@@ -802,6 +812,7 @@ public class Warehouse {
 		JLabel ccExpiryLabel = new JLabel("Expiry Date");
 		JLabel ccNumberLabel = new JLabel("Credit Card Number");
 		JButton purchaseConfirm = new JButton("Confirm Purchase");
+		JButton backButton = new JButton("Back");
 		
 		Vector<String> columnNames = new Vector<String>();
 		columnNames.add("Item UPC");
@@ -836,6 +847,7 @@ public class Warehouse {
 		checkOutPane.add(ccExpiry);
 		checkOutPane.add(sP);
 		checkOutPane.add(purchaseConfirm);
+		checkOutPane.add(backButton);
 		purchaseConfirm.addActionListener(new ActionListener(){
 
 			@Override
@@ -868,8 +880,16 @@ public class Warehouse {
 					JOptionPane.showMessageDialog(null, "Date Invalid");
 					return;
 				}
+				shoppingList.clear();
+				
 			}
 			
+		});
+		backButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				loadOnlineOrder();
+			}
 		});
 		mainFrame.setContentPane(checkOutPane);
 		mainFrame.setSize(600, 600);
@@ -916,10 +936,10 @@ public class Warehouse {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(qtyOnline.getText().trim().equals("") || qtyOnline.getText().trim().equals("0")){
-					JOptionPane.showMessageDialog(null, "Enter a Quantity");
-					return;
-				}
+				//if(qtyOnline.getText().trim().equals("") || qtyOnline.getText().trim().equals("0")){
+				//	JOptionPane.showMessageDialog(null, "Enter a Quantity");
+				//	return;
+				//}
 				int i = search(category.getText().trim(), title.getText().trim(), leadSinger.getText().trim());
 				if(i == 0){
 					//just some memory freeing
@@ -954,7 +974,7 @@ public class Warehouse {
 							}else{
 								int flag = JOptionPane.showConfirmDialog(null, "quantity available (" + qty +")is lower than user specificed ("+ qtyOnline.getText().trim() + "), continue?");
 								if(flag == 0){
-									addShopping(upcTemp, qty, price);
+									addShopping(upcTemp, qtyOnline.getText(), price);
 									JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcTemp + "at Price " + price +" is in the Cart");
 									//System.out.print("yay");
 								}
@@ -1010,8 +1030,8 @@ public class Warehouse {
 					}else{
 						int flag = JOptionPane.showConfirmDialog(null, "quantity is lower than specificed, continue?");
 						if(flag == 0){
-							addShopping(upcOnline.getText().trim(), qtyOnline.getText().trim(), price);
-							JOptionPane.showMessageDialog(null, qtyOnline.getText().trim() +" of Item# "+ upcOnline.getText().trim() + "at Price " + price +" is in the Cart");
+							addShopping(upcOnline.getText().trim(), qty, price);
+							JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcOnline.getText().trim() + "at Price " + price +" is in the Cart");
 							//System.out.print("yay");
 						}
 						
