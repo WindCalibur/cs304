@@ -1533,7 +1533,7 @@ public class Warehouse {
 	  DailyRowData.add(buffer2);
 	  buffer2 = new String[numCols];
 	  buffer2[0] = "";
-      buffer2[1] = "Total Daily Sales";
+      buffer2[1] = "Total Sales";
       buffer2[2] = "";
 	  buffer2[3] = Integer.toString(totalUnit);
 	  buffer2[4] = Integer.toString(totalSum);
