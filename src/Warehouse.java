@@ -938,10 +938,10 @@ public class Warehouse {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//if(qtyOnline.getText().trim().equals("") || qtyOnline.getText().trim().equals("0")){
-				//	JOptionPane.showMessageDialog(null, "Enter a Quantity");
-				//	return;
-				//}
+				if(qtyOnline.getText().trim().equals("") || qtyOnline.getText().trim().equals("0")){
+					JOptionPane.showMessageDialog(null, "Enter a Quantity");
+					return;
+				}
 				int i = search(category.getText().trim(), title.getText().trim(), leadSinger.getText().trim());
 				if(i == 0){
 					//just some memory freeing
@@ -971,7 +971,7 @@ public class Warehouse {
 						if(qty!= null&&price!=null){
 							if(Integer.parseInt(qty.trim()) >= Integer.parseInt(qtyOnline.getText().trim())){
 							addShopping(upcTemp, qtyOnline.getText().trim(), price);
-							JOptionPane.showMessageDialog(null, qtyOnline.getText().trim() +" of Item# "+ upcTemp + "at Price " + price +" is in the Cart");
+							JOptionPane.showMessageDialog(null, qtyOnline.getText().trim() +" of Item# "+ upcTemp + " at Price " + price +" is in the Cart");
 							
 							}else{
 								int flag = JOptionPane.showConfirmDialog(null, "quantity available (" + qty +") is lower than user specificed ("+ qtyOnline.getText().trim() + "), continue?");
@@ -1033,7 +1033,7 @@ public class Warehouse {
 						int flag = JOptionPane.showConfirmDialog(null, "quantity is lower than specificed, continue?");
 						if(flag == 0){
 							addShopping(upcOnline.getText().trim(), qty, price);
-							JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcOnline.getText().trim() + "at Price " + price +" is in the Cart");
+							JOptionPane.showMessageDialog(null, qty +" of Item# "+ upcOnline.getText().trim() + " at Price " + price +" is in the Cart");
 							//System.out.print("yay");
 						}
 						
